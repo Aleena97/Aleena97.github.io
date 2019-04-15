@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<style>
+.navbar {
+	width: 100%;
+	background-color: #555;
+	overflow: auto;
+}
+
+.navbar span {
+	float: left;
+	padding: 12px;
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.navbar a {
+	float: right;
+	padding: 12px;
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.navbar a:hover {
+	background-color: green;
+}
+
+table {
+	width: 100%;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 15px;
+	text-align: left;
+}
+
+table#t01 tr:nth-child(even) {
+	background-color: #eee;
+}
+
+table#t01 tr:nth-child(odd) {
+	background-color: #fff;
+}
+
+table#t01 th {
+	background-color: black;
+	color: white;
+}
+</style>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>BPMN Webapp</title>
+</h:head>
+
+<h:body>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+	<!-- Navigation Bar -->
+	<div class="navbar">
+		<span> JWA Cockpit</span> <a href="index.xhtml"><i
+			class="fa fa-fw fa-home"></i>Home</a> <a href="#"><i
+			class="fa fa-fw fa-user"></i>#{login.username}</a> <a
+			href="tasklist.xhtml"><i class="fa fa-fw fa-bars"></i>Tasklist</a>
+	</div>
+
+
+	<h2>Process</h2>
+
+	<!-- Processes Table -->
+
+	<table id="process_table">
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Start Instance</th>
+			<th>Instances</th>
+		</tr>
+	</table>
+	<script type="text/javascript">
+//<![CDATA[
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    	var resData = JSON.parse(this.responseText);
+    	var processTable = document.getElementById("process_table");
+
+    	for (i = 0; i < resData.length; i++) {
+    		var row = processTable.insertRow(i+1);
+
+    		var cell1 = row.insertCell(0); var cell2 = row.insertCell(1);
+    		var cell3 = row.insertCell(2); var cell4 = row.insertCell(3);
+
+    		cell1.innerHTML = resData[i].name; 
+    		cell2.innerHTML = resData[i].description;
+    		cell4.innerHTML = '0';
+    		
+    		var btn = document.createElement("BUTTON");    
+    		btn.appendChild(document.createTextNode("Start Process"));
+    		cell3.appendChild(btn);
+    		
+    		cell3.setAttribute("id",resData[i].key);
+    		cell4.setAttribute("id",resData[i].name); cell4.classList.add("process");
+    		cell3.onclick = startProcess;
+    	}
+    	getInstances();
+    }
+}
+
+  xhttp.open("GET", "http://localhost:8080/engine-rest/process-definition?latest=true", true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.send();
+  
+  
+  function startProcess(event){
+	  
+	  var startReq = new XMLHttpRequest();
+	  startReq.onreadystatechange = function(){
+		  if (this.readyState == 4 && this.status == 200){
+			  alert("Process started");
+			  getInstances();
+		  }
+	  }
+	  var key = event.currentTarget.id;
+	  startReq.open("POST", "http://localhost:8080/engine-rest/process-definition/key/"+ key +"/start");
+	  startReq.setRequestHeader("Content-Type", "application/json");
+	  startReq.send();
+	  
+	}
+  
+  	function getInstances(){
+  	  var processes = document.getElementsByClassName("process");
+  	  var instancesReq = new XMLHttpRequest();
+  	  instancesReq.onreadystatechange = function(){
+  		  if (this.readyState == 4 && this.status == 200){
+  			var resData = JSON.parse(this.responseText);
+  			for (j = 0; j < processes.length; j++){
+  				var instancesCell =  processes[j]; 
+  				instancesCell.innerHTML = '0';
+  				for(i = 0; i < resData.length; i++){
+  	  				if (instancesCell.id == resData[i].definition.name){
+  	  					var instances = parseInt(instancesCell.innerHTML, 10);
+  	  				    instances = instances + resData[i].instances;
+  	  					instancesCell.innerHTML = instances.toString();
+  	  				}
+  	  			}
+  			}
+  		  }
+  	  }
+  	  
+  	  var key = event.currentTarget.id;
+  	  instancesReq.open("GET", "http://localhost:8080/engine-rest/process-definition/statistics?");
+  	  instancesReq.send();
+  	}
+
+//]]>
+</script>
+</h:body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<head>
+<style>
+input[type=text], input[type=password] {
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+
+.container {
+	padding: 16px;
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>BPMN JWA</title>
+</head>
+<body>
+	<h1>Welcome to BPMN JWA</h1>
+
+
+	<form id="form_id" method="post" name="myform">
+		<label>User Name :</label>
+		<input type="text" name="username" id="username" />
+		<label>Password :</label>
+		<input type="password" name="password" id="password" />
+		<input type="button" value="Login" id="submit" onclick="validate()" />
+	</form>
+	
+	
+	<script type="text/javascript">
+		//<![CDATA[
+			
+		var attempt = 3;
+		function validate() {
+			var username = document.getElementById("username").value;
+			var password = document.getElementById("password").value;
+			if (username == "demo" && password == "demo") {
+				window.location = "cockpit.xhtml"; // Redirecting to other page.
+				return false;
+			} else {
+				attempt--;
+				alert("You have left " + attempt + " attempt;");
+				if (attempt == 0) {
+					document.getElementById("username").disabled = true;
+					document.getElementById("password").disabled = true;
+					document.getElementById("submit").disabled = true;
+					return false;
+				}
+			}
+		}
+
+		//]]>
+	</script>
+</body>
+</html>

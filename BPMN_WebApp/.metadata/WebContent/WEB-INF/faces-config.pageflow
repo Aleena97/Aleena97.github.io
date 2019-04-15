@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf15519787068260" configfile="/BPMN_WebApp/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="index.xhtml" x="122" y="562" id="pf15519833536441" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf15519833536452 pf15519833536453 pf15519833536454" path="/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="tasklist.xhtml" x="338" y="178" id="pf15519833536455" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf15519833536452" path="/tasklist.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="cockpit.xhtml" x="338" y="562" id="pf15519833536456" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf15519833536453" path="/cockpit.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="notFound.xhtml" x="338" y="946" id="pf15519833536457" referenceLink="//@navigationRule.0/@navigationCase.2/@toViewId|" inlinks="pf15519833536454" path="/notFound.xhtml"/>
+  <links id="pf15519833536452" target="pf15519833536455" source="pf15519833536441" outcome="Can Login"/>
+  <links id="pf15519833536453" target="pf15519833536456" source="pf15519833536441" outcome="Admin Login"/>
+  <links id="pf15519833536454" target="pf15519833536457" source="pf15519833536441" outcome="Login Failed"/>
+</pageflow:Pageflow>

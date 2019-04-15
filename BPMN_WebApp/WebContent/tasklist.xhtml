@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<style>
+	
+
+ button.closeButton {
+ 	float: right;
+    display: inline-block;
+    margin-top: 7px;
+ }
+ 
+ input.readOnly {
+ 	color: #777;
+    background-color: #eee;
+ }
+ 
+ div.collapsable-panel{
+ 	width:15%;
+ 	left: 220px;
+ 	visibility: hidden;
+ }
+ 
+.navbar {
+	width: 100%;
+	background-color: #555;
+	overflow: auto;
+}
+
+.navbar span {
+	float: left;
+	padding: 12px;
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.navbar a {
+	float: right;
+	padding: 12px;
+	color: white;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.navbar a:hover { 
+  background-color: green;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul.a {
+  list-style-type: circle;
+}
+
+.caret {
+  cursor: pointer;
+  user-select: none;
+}
+
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.caret-down::before {
+  transform: rotate(90deg);  
+}
+
+.nested {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+</style>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>BPMN Webapp</title>
+</h:head>
+
+<h:body>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/> 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+<!-- Navigation Bar -->
+	<div class="navbar">
+		<span> JWA Tasklist</span> 
+		<a href="index.xhtml"><i class="fa fa-fw fa-home"></i>Home</a>
+		<a href="#"><i class="fa fa-fw fa-user"></i>#{login.username}</a>
+		<a href="cockpit.xhtml"><i class="fa fa-fw fa-bars"></i>Cockpit</a>
+		
+	</div>
+
+<!-- Tasks -->
+<div  class="w3-sidebar w3-light-grey w3-bar-block" style="width:15%">
+  
+  <ul id="tasklist" style="padding-top:10px;">
+		<li><span class="caret">My Tasks</span>
+			<ul class="nested" >
+				<li id="to-do">To-Do</li>
+				<li id="incomplete">Incomplete</li>
+
+			</ul>
+			</li>
+			<li><span class="caret">Team Tasks</span>
+			<ul class="nested">
+				<li id="team-to-do">To-Do</li>
+				<li id="team-incomplete">Incomplete</li>
+				<li id="read-only">Read Only</li>
+			</ul>
+			</li>		
+	</ul>
+</div>
+
+<!-- My To-Do's Tasks -->
+<div id="myTasksDiv" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel">
+  
+	<div style="padding:10px;display: inline-block;"> My Tasks </div>
+		<button class="closeButton" onclick="closeCurrentPanel('myTasksDiv')" >&times;</button>
+		<ul class ="a" id="myTasksList"> 
+			
+					
+		</ul>
+</div>
+
+<!-- My Incomplete Tasks -->
+<div id="myIncompleteTasksDiv" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel">
+  
+  
+	<div style="padding:10px;display: inline-block;"> My Incomplete Tasks </div>
+		<button class="closeButton" onclick="closeCurrentPanel('myIncompleteTasksDiv')" >&times;</button>
+		<ul class ="a" id="myIncompleteList"> 
+			
+					
+		</ul>
+</div>
+
+
+<!-- Teams To-Do Tasks -->
+<div id="TeamToDoDiv" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel">
+  
+  
+	<div style="padding:10px;display: inline-block;"> My Team Tasks </div>
+		<button class="closeButton" onclick="closeCurrentPanel('TeamToDoDiv')" >&times;</button>
+		<ul class ="a" id="teamTasksList"> 
+			
+					
+		</ul>
+</div>
+
+
+<!-- Teams Incomplete Tasks -->
+<div id="TeamIncompleteDiv" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel">
+  
+  
+	<div style="padding:10px;display: inline-block;"> Teams Incomplete Tasks </div>
+		<button class="closeButton" onclick="closeCurrentPanel('TeamIncompleteDiv')" >&times;</button>
+		<ul class ="a" id="teamIncompleteTasksList"> 
+			
+					
+		</ul>
+</div>
+
+<!-- Teams Read-Only Tasks -->
+<div id="readOnlyDiv" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel">
+  
+  
+	<div style="padding:10px;display: inline-block;"> Read-Only Tasks </div>
+		<button class="closeButton" onclick="closeCurrentPanel('readOnlyDiv')" >&times;</button>
+		<ul class ="a" id="readOnlyTasksList"> 
+			
+					
+		</ul>
+</div>
+
+<!-- Form Block -->
+<div id="taskForm" class="w3-sidebar w3-light-grey w3-bar-block collapsable-panel" style="width:40%; left: 450px;"> 
+	<div style="padding:10px;display: inline-block;"> Form </div>
+		<button id="claimButton" onclick="claimTask()" type="button" style="visibility:hidden"> Claim </button>
+		<button class="closeButton" onclick="closeCurrentPanel('taskForm')">&times;</button>
+		
+	<form id="form">
+		<div id="formDiv">
+		
+		</div>
+		
+		<div><button type="submit"> Submit </button></div>
+		<div><button type="button"> Complete Later </button></div>
+		
+		
+		
+	</form>
+		
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	
+	
+var openedTaskPanel;
+
+function closeCurrentPanel(panelId){
+	var panelToClose = document.getElementById(panelId);
+	panelToClose.style.visibility = "hidden";
+	var claimButton = document.getElementById("claimButton");
+	claimButton.style.visibility = "hidden";
+}
+
+function closeAllOtherPanels(openPanel){
+	var claimButton = document.getElementById("claimButton");
+	claimButton.style.visibility = "hidden";
+	var panelsToClose = document.getElementsByClassName("collapsable-panel");
+	for (i = 0; i < panelsToClose.length; i++){
+		panelsToClose[i].style.visibility = "hidden";
+	}
+	openPanel.style.visibility = "visible";
+}
+	
+var toggler = document.getElementsByClassName("caret");
+for (i = 0; i < toggler.length; i++) {
+	  toggler[i].addEventListener("click", function() {
+	    this.parentElement.querySelector(".nested").classList.toggle("active");
+	    this.classList.toggle("caret-down");
+	  });
+	}
+	
+var taskType = "";	
+<!-- My To-Do's Tasks -->	
+var toDo = document.getElementById("to-do");
+var myTask = document.getElementById("myTasksDiv");
+var myTaskList = document.getElementById("myTasksList");	
+
+toDo.addEventListener("click", getMyToDos);
+
+function getMyToDos(){
+	openedTaskPanel = myTask;
+	closeAllOtherPanels(myTask);	
+	taskType = "Mine";
+	var toDoReq = new XMLHttpRequest();
+	toDoReq.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+		  var resData = JSON.parse(this.responseText);
+		  while(myTaskList.firstChild) myTaskList.removeChild(myTaskList.firstChild);
+		  for (i = 0; i < resData.length; i++) { 
+			  var node = document.createElement("LI");
+			  node.setAttribute("id",resData[i].id);
+			  node.onclick = getForm;
+			  var textnode = document.createTextNode(resData[i].name);
+			  node.appendChild(textnode);        
+			  myTaskList.appendChild(node);
+		  	}
+	  	}  
+	}
+	
+	toDoReq.open("GET", "http://localhost:8080/engine-rest/task?assignee=demo&maxPriority=50", true);
+	toDoReq.setRequestHeader("Content-Type", "application/json");
+	toDoReq.send();
+}
+
+<!-- My Incomplete Tasks -->
+var incomplete = document.getElementById("incomplete");
+var myIncomplete = document.getElementById("myIncompleteTasksDiv");
+var myIncompleteList = document.getElementById("myIncompleteList");
+
+
+incomplete.addEventListener("click", function(){
+	openedTaskPanel = myIncomplete;
+	closeAllOtherPanels(myIncomplete);	
+});
+
+
+<!-- Teams To-Do Tasks -->
+var teamToDo = document.getElementById("team-to-do");
+var teamToDoDiv = document.getElementById("TeamToDoDiv");
+var teamTaskList = document.getElementById("teamTasksList");
+
+teamToDo.addEventListener("click", function(){
+	openedTaskPanel = teamToDoDiv;
+	closeAllOtherPanels(teamToDoDiv);
+	taskType = "Team";
+	var teamToDoReq = new XMLHttpRequest();
+	teamToDoReq.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+		  var resData = JSON.parse(this.responseText);
+		  while(teamTaskList.firstChild) teamTaskList.removeChild(teamTaskList.firstChild);
+		  teamToDo.style.visibility = "visible";
+		  for (i = 0; i < resData.length; i++) { 
+			  var node = document.createElement("LI");
+			  node.setAttribute("id",resData[i].id);
+			  node.onclick = getForm;
+			  var textnode = document.createTextNode(resData[i].name);         // Create a text node
+			  node.appendChild(textnode);                              // Append the text to <li>
+			  teamTaskList.appendChild(node);
+			  
+		  	}
+	  	}  
+	}
+	
+	teamToDoReq.open("GET","http://localhost:8080/engine-rest/task?&maxPriority=50", true);
+	teamToDoReq.setRequestHeader("Content-Type", "application/json");
+	teamToDoReq.send();
+	
+});
+
+
+<!-- Teams Incomplete Tasks -->
+var teamIncomplete = document.getElementById("team-incomplete");
+var teamIncompleteDiv = document.getElementById("TeamIncompleteDiv");
+var teamIncompleteList = document.getElementById("teamIncompleteTasksList");
+
+teamIncomplete.addEventListener("click", function(){
+	closeAllOtherPanels(teamIncompleteDiv);	
+});
+
+
+<!-- Teams Read-Only Tasks -->
+var readOnly = document.getElementById("read-only");
+var readOnlyDiv = document.getElementById("readOnlyDiv");
+var readOnlyList = document.getElementById("readOnlyList");
+
+readOnly.addEventListener("click", function(){
+	closeAllOtherPanels(readOnlyDiv);
+});
+
+<!-- Get Form -->
+var taskId;
+function getForm(event) {
+	var formKeyReq = new XMLHttpRequest();
+	formKeyReq.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+		  var resData = JSON.parse(this.responseText);
+		  var formBlock = document.getElementById("taskForm");
+		  var formDiv = document.getElementById("formDiv");
+		  if(taskType == "Team"){
+			  var claimButton = document.getElementById("claimButton");
+			  claimButton.style.visibility = "visible";
+		  }
+		  formBlock.style.visibility = "visible"; 
+		  if(resData.contextPath == null){
+			  
+			  var formReq = new XMLHttpRequest();
+			  formReq.onreadystatechange = function(){
+				  if (this.readyState == 4 && this.status == 200) {
+					  formDiv.innerHTML = this.responseText;
+					  getFormVariables();
+				  } else if (this.readyState == 4 && this.status == 404){
+					  var node = document.createElement('div');
+				      formDiv.innerHTML = '<div> <input type="checkbox" id="complete" name="complete"><label for="complete">Task complete</label></div>';  
+					  
+				  }
+			  };
+			  
+			  formReq.open("GET", "http://localhost:8080/engine-rest/task/"+taskId+"/rendered-form", true);
+			  formReq.setRequestHeader("Content-Type", "application/json");
+			  formReq.send();
+			  
+			 
+		  } else {
+			  var formKey = resData.key.substring(13, resData.key.length);
+			  var url = "http://localhost:8080" + resData.contextPath + "/" + formKey + "?&userId=demo";
+			  //var url = "http://localhost:8080" + resData.contextPath + "/" + formKey + "?&userId=#{login.username}";
+			  var formReq = new XMLHttpRequest();
+			  formReq.onreadystatechange = function(){
+				  if (this.readyState == 4 && this.status == 200) {
+					  formDiv.innerHTML = this.responseText;
+					  getFormVariables();
+				  }
+			  };
+			  
+			  formReq.open("GET", url, true);
+			  formReq.setRequestHeader("Content-Type", "application/json");
+			  formReq.send();  
+		  }
+	  	}  
+	}
+	taskId = event.target.id;
+	formKeyReq.open("GET", "http://localhost:8080/engine-rest/task/"+taskId+"/form", true);
+	formKeyReq.send();
+}
+
+
+
+
+
+
+<!-- Get Form variables values -->
+
+function getFormVariables(){
+	
+	var formVarReq = new XMLHttpRequest();
+	var formVars = formDiv.querySelectorAll("input");
+	formVarReq.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 200){
+			var resData = JSON.parse(this.responseText);
+			for (i = 0; i < formVars.length; i++){
+				if(taskType == "Team"){
+					formVars[i].classList.add("readOnly");
+					formVars[i].disabled = true;
+					
+				  }
+				formVars[i].value = resData[formVars[i].name].value;
+				
+				if (formVars[i].readOnly == true){
+					formVars[i].classList.add("readOnly");
+					formVars[i].disabled = true;
+				}
+			}
+		}
+	}
+	
+	formVarReq.open("GET", "http://localhost:8080/engine-rest/task/"+taskId+"/form-variables?deserializeValues=false",true);
+	formVarReq.send();	
+}
+
+
+
+
+
+
+<!-- Claim Task -->
+
+function claimTask(){
+	var claimReq = new XMLHttpRequest();
+	claimReq.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 204){
+			alert("task claimed");
+		}
+	}
+	claimReq.open("POST", "http://localhost:8080/engine-rest/task/"+taskId+"/claim");
+	var body = '{"userId": "demo"}';
+	claimReq.setRequestHeader("Content-Type", "application/json");
+	claimReq.send(body);
+}
+
+
+<!-- Submit Form -->
+document.getElementById("form").addEventListener("submit", (e) => {
+	e.preventDefault();
+	var formVariables = {
+			variables: {}
+	}
+	
+	var formData = new FormData(e.target);
+	var data = new FormData();
+	for (i = 0; i < e.target.length-2; i++){
+		if (!e.target[i].className.includes("readOnly")){
+			data.append(e.target[i].name, e.target[i].value);
+		}
+	}
+	
+	var data = Array.from(data.entries()).reduce((memo, pair) => ({
+	    ...memo,    
+	    [pair[0]]:  { '"value"': pair[1] } , 
+	  }), {});
+	
+	formVariables.variables = data;
+	var reqBody = JSON.stringify(formVariables);
+	var submitReq = new XMLHttpRequest();
+	submitReq.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 204 || this.status == 200){
+			alert("form submitted");
+			closeAllOtherPanels();
+			
+		} else if (this.readyState == 2 && this.status == 400){
+			alert("The variable value or type is invalid");
+		} else if (this.readyState == 2 && this.status == 500){
+			alert("Internal server error");
+		}
+	}
+	var url = "http://localhost:8080/engine-rest/task/"+taskId+"/submit-form"
+	submitReq.open("POST", url, true);
+	submitReq.setRequestHeader("Content-Type", "application/json");
+	submitReq.send(reqBody);
+});
+
+//]]>
+</script>
+</h:body>
+</html>
